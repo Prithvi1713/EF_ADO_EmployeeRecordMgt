@@ -14,6 +14,9 @@
     <thead>
         <tr>
             <th>
+                <input type="checkbox" id="selectAll" />
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.DesignName)
             </th>
             <th> Actions</th>
@@ -21,16 +24,54 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DesignName)
-            </td>
-            <td>
+            <tr>
+                <td>
+                    <input type="checkbox"
+                           class="row-checkbox"
+                           value="@item.DesignId" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DesignName)
+                </td>
+                <td>
                     <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.DesignId">Edit</a>
-                    <a class="btn btn-success"  asp-action="Details" asp-route-id="@item.DesignId">Details</a>
-                    <a class="btn btn-danger"  asp-action="Delete" asp-route-id="@item.DesignId">Delete</a>
-            </td>
-        </tr>
-}
+                    <a class="btn btn-success" asp-action="Details" asp-route-id="@item.DesignId">Details</a>
+                    <a class="btn btn-danger" id="btnDelete" asp-action="Delete" asp-route-id="@item.DesignId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script>
+    $(function(){
+        $("#selectAll").on("change", function () {
+            $(".row-checkbox").prop("checked", this.checked);
+        });
+        $(".row-checkbox").on("change", function () {
+            $("#selectAll").prop(
+                "checked",
+                $(".row-checkbox").length === $(".row-checkbox:checked").length
+            );
+        });
+    })
+        function getSelectedIds() {
+        var ids = [];
+        $(".row-checkbox:checked").each(function () {
+            ids.push($(this).val());
+        });
+        return ids;
+    }
+        $("#btnDelete").click(function () {
+        var selectedIds = getSelectedIds();
+
+        if (selectedIds.length === 0) {
+            alert("Please select at least one record");
+            return;
+        }
+
+       // console.log(selectedIds); // [1, 3, 5]
+    });
+</script>
+
